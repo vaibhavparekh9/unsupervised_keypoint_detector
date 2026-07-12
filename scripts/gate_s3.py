@@ -208,6 +208,7 @@ def main():
 
     gate_pass = all(v.get("ok") for v in status.values())
     report = {"status": status, "gate_pass": bool(gate_pass)}
+    os.makedirs(os.path.join(REPO, "outputs/diagnostics"), exist_ok=True)
     with open(os.path.join(REPO, "outputs/diagnostics/gate_s3.json"), "w") as f:
         json.dump(report, f, indent=1)
     print(json.dumps(report, indent=1))
