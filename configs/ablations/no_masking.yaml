@@ -1,0 +1,7 @@
+_base: ../base.yaml
+
+loss:
+  visibility_masking: false
+
+train:
+  out_dir: outputs/runs/no_masking

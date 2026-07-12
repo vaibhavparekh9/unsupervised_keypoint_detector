@@ -1,0 +1,7 @@
+_base: ../base.yaml
+
+loss:
+  cross_instance: none
+
+train:
+  out_dir: outputs/runs/cross_none

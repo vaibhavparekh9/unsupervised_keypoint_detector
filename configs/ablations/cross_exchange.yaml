@@ -1,0 +1,7 @@
+_base: ../base.yaml
+
+loss:
+  cross_instance: exchange
+
+train:
+  out_dir: outputs/runs/cross_exchange

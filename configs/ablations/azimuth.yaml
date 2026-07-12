@@ -1,0 +1,7 @@
+_base: ../base.yaml
+
+model:
+  orientation: azimuth
+
+train:
+  out_dir: outputs/runs/azimuth

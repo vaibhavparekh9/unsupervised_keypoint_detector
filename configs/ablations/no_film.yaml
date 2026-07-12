@@ -1,0 +1,7 @@
+_base: ../base.yaml
+
+model:
+  film: false
+
+train:
+  out_dir: outputs/runs/no_film

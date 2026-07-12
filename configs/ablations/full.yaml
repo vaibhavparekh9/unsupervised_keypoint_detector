@@ -1,0 +1,4 @@
+_base: ../base.yaml
+
+train:
+  out_dir: outputs/runs/full

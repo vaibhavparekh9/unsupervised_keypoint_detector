@@ -1,0 +1,12 @@
+_base: ../base.yaml
+
+backbone:
+  name: dinov3_vitb16
+  dim: 768
+  dinov3_weights: data/downloads/dinov3_vitb16_pretrain_lvd1689m-73cec8be.pth
+
+data:
+  input_res: 512               # patch 16: must be /16  TOBECHANGED 896 (3090)
+
+train:
+  out_dir: outputs/runs/dinov3
