@@ -95,8 +95,8 @@ def run_bench(bench, data, ckpt, subset="all", max_pairs=30):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ckpt", default="outputs/runs/smoke/ckpt_last.pth")
-    ap.add_argument("--image-root", default="/home/vaibhav/3DRealCars-English")
-    ap.add_argument("--labels-root", default="/home/vaibhav/3DRealCars-Labels")
+    ap.add_argument("--image-root", default="/home/vsparekh/3DRealCars-English")
+    ap.add_argument("--labels-root", default="/home/vsparekh/3DRealCars-Labels")
     ap.add_argument("--fixture-cars", default="dev_test_smoke",
                     help="split key for fixture frames (lab PC: lab_test)")
     args = ap.parse_args()

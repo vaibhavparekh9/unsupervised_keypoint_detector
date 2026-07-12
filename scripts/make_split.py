@@ -12,7 +12,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-IMAGE_ROOT = "/home/vaibhav/3DRealCars-English"
+IMAGE_ROOT = "/home/vsparekh/3DRealCars-English"
 OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                    "configs", "split.json")
 

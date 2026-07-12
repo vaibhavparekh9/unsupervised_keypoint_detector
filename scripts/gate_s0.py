@@ -100,8 +100,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--num-pairs", type=int, default=60)
     ap.add_argument("--cars", default="dev_smoke")
-    ap.add_argument("--image-root", default="/home/vaibhav/3DRealCars-English")
-    ap.add_argument("--labels-root", default="/home/vaibhav/3DRealCars-Labels")
+    ap.add_argument("--image-root", default="/home/vsparekh/3DRealCars-English")
+    ap.add_argument("--labels-root", default="/home/vsparekh/3DRealCars-Labels")
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
 

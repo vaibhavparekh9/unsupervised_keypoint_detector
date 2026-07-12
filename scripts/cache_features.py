@@ -39,7 +39,7 @@ def main():
     ap.add_argument("--max-frames", type=int, default=80)  # TOBECHANGED none: pass 0 (3090)
     ap.add_argument("--batch", type=int, default=2)        # TOBECHANGED 16 (3090)
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
-    ap.add_argument("--image-root", default="/home/vaibhav/3DRealCars-English")
+    ap.add_argument("--image-root", default="/home/vsparekh/3DRealCars-English")
     ap.add_argument("--cache-root", default=os.path.join(REPO, "outputs/cache"))
     args = ap.parse_args()
 

@@ -87,7 +87,7 @@ separation; depth-consistency visibility threshold ε=0.05 m; DVE exchange retai
 **unmasked** camera correspondences (17.3 intra PCK) score worse than TPS-only (40.4) — visibility masking
 is non-negotiable wherever reprojection supervises training.
 
-Old codebase: `/home/vaibhav/DVE_multiview (working)/` (fork of jamt9000/DVE). Port, don't rewrite blind:
+Old codebase: `/home/vsparekh/DVE_multiview (working)/` (fork of jamt9000/DVE). Port, don't rewrite blind:
 - `data_loader/data_loaders.py` — 3DRealCar pair sampling, unprojection/reprojection warp + ARKit pose
   conventions (known-good math).
 - `model/loss.py`, `model/folded_correlation_dve.py` — DVE loss machinery (memory-efficient correlation).
@@ -96,7 +96,7 @@ Old codebase: `/home/vaibhav/DVE_multiview (working)/` (fork of jamt9000/DVE). P
 - Configs: `configs-vaibhav/cars-hourglass-64d-dve.json`, `cars-new.json`. Thesis + DVE PDFs live there.
 
 ## Data (verified formats)
-- `/home/vaibhav/3DRealCars-English/<car_id>/` — ~2585 car folders (`0000`…), each a 360° walkaround:
+- `/home/vsparekh/3DRealCars-English/<car_id>/` — ~2585 car folders (`0000`…), each a 360° walkaround:
   - `frame_XXXXX.jpg` — RGB ≈1920×1440.
   - `frame_XXXXX.json` — `intrinsics` (flat 3×3; fx≈fy≈1333, cx≈967, cy≈731), `cameraPoseARFrame`
     (flat 4×4 camera-to-world, ARKit convention — trust the old data_loader's axis math), `frame_index`,
@@ -104,7 +104,7 @@ Old codebase: `/home/vaibhav/DVE_multiview (working)/` (fork of jamt9000/DVE). P
   - `depth_XXXXX.png` — depth for ~every 6th frame. Verify encoding on first use (likely 16-bit mm→m).
     Only depth-bearing frames can be *source* views for reprojection.
   - `annotations.json`, `<car_id>_annotation.json` — capture metadata.
-- `/home/vaibhav/3DRealCars-Labels/<car_id>/labels/frame_XXXXX_pifpaf.json` — OpenPifPaf 24-keypoint
+- `/home/vsparekh/3DRealCars-Labels/<car_id>/labels/frame_XXXXX_pifpaf.json` — OpenPifPaf 24-keypoint
   vehicle pseudo-labels: `annotations` list (empty = no detection). **Evaluation/diagnostics only, never a
   training signal.** Thesis convention: keep frames with exactly one detection.
 - Split: thesis convention — 500-car training pool, held-out test cars. Persist as a committed file

@@ -1,11 +1,11 @@
 # Base config — dev-PC defaults (RTX 3070 8 GB). Grep TOBECHANGED before lab runs.
 
 data:
-  image_root: /home/vaibhav/3DRealCars-English
-  labels_root: /home/vaibhav/3DRealCars-Labels
+  image_root: /home/vsparekh/3DRealCars-English
+  labels_root: /home/vsparekh/3DRealCars-Labels
   split_file: configs/split.json
-  train_cars: dev_smoke        # TOBECHANGED lab_train (3090; 400 cars, see split.json)
-  test_cars: dev_test_smoke    # TOBECHANGED lab_test (3090; lab PC has cars 0000-0499 only)
+  train_cars: lab_train        # TOBECHANGED lab_train (3090; 400 cars, see split.json)
+  test_cars: lab_test    # TOBECHANGED lab_test (3090; lab PC has cars 0000-0499 only)
   input_res: 518               # TOBECHANGED 896 (3090)
   grid_res: 64
   theta_min: 30.0
@@ -15,7 +15,7 @@ data:
   motion_quality_thresh: 0.5
   max_frames_per_car: null
   max_pairs_per_car: 200
-  num_workers: 4               # TOBECHANGED 8 (3090)
+  num_workers: 24               # TOBECHANGED 8 (3090)
 
 backbone:
   name: dinov2_vitb14_reg      # TOBECHANGED dinov3 (3090; needs gated weights, see README)
@@ -47,15 +47,15 @@ loss:
   visibility_masking: true
 
 train:
-  batch_size: 4                # pairs per batch  TOBECHANGED 16 (3090)
+  batch_size: 16                # pairs per batch  TOBECHANGED 16 (3090)
   lr: 1.0e-4
   weight_decay: 0.01
-  total_steps: 3000            # TOBECHANGED 60000 (3090)
+  total_steps: 60000            # TOBECHANGED 60000 (3090)
   warmup_steps: 200
   amp: true
   seed: 0
   log_every: 25
   ckpt_every: 500
-  eval_every: 500              # TOBECHANGED 2000 (3090)
+  eval_every: 2000              # TOBECHANGED 2000 (3090)
   vis_every: 500
   out_dir: outputs/runs/base

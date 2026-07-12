@@ -78,8 +78,8 @@ def main():
     ap.add_argument("--num-intra", type=int, default=150)
     ap.add_argument("--num-cross", type=int, default=80)
     ap.add_argument("--k-landmarks", type=int, default=16)
-    ap.add_argument("--image-root", default="/home/vaibhav/3DRealCars-English")
-    ap.add_argument("--labels-root", default="/home/vaibhav/3DRealCars-Labels")
+    ap.add_argument("--image-root", default="/home/vsparekh/3DRealCars-English")
+    ap.add_argument("--labels-root", default="/home/vsparekh/3DRealCars-Labels")
     args = ap.parse_args()
 
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")

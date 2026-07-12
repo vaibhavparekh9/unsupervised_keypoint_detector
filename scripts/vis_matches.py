@@ -56,10 +56,10 @@ def main():
     ap.add_argument("--pifpaf", action="store_true",
                     help="query at A's PifPaf keypoints instead of a grid; "
                          "draw B's own PifPaf keypoints as ground truth (x)")
-    ap.add_argument("--labels-root", default="/home/vaibhav/3DRealCars-Labels")
+    ap.add_argument("--labels-root", default="/home/vsparekh/3DRealCars-Labels")
     ap.add_argument("--min-sim", type=float, default=0.6)
     ap.add_argument("--device", default=None)
-    ap.add_argument("--image-root", default="/home/vaibhav/3DRealCars-English")
+    ap.add_argument("--image-root", default="/home/vsparekh/3DRealCars-English")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 

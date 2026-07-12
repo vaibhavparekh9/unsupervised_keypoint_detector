@@ -64,8 +64,8 @@ def main():
     ap.add_argument("--input-res", type=int, default=518)
     ap.add_argument("--num-intra", type=int, default=250)
     ap.add_argument("--num-cross", type=int, default=120)
-    ap.add_argument("--image-root", default="/home/vaibhav/3DRealCars-English")
-    ap.add_argument("--labels-root", default="/home/vaibhav/3DRealCars-Labels")
+    ap.add_argument("--image-root", default="/home/vsparekh/3DRealCars-English")
+    ap.add_argument("--labels-root", default="/home/vsparekh/3DRealCars-Labels")
     args = ap.parse_args()
 
     cache_root = os.path.join(REPO, "outputs/cache",

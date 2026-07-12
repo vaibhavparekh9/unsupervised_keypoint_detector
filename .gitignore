@@ -5,5 +5,4 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 *.egg-info/
-# datasets/downloads at repo root only (NOT src/data — root-anchored on purpose)
-/data/
+data/
