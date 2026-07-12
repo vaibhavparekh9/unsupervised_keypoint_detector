@@ -29,6 +29,7 @@ review between stages. Rules:
 | GPU | RTX 3070 Laptop, **8 GB** VRAM | RTX 3090, **24 GB** VRAM |
 | Driver/CUDA | 580.159.03 | 580.159.04 / CUDA 13.0 |
 | RAM / disk | 30 GB / ~199 GB free | more |
+| Python | **3.10.12** (system) | **3.12.3** (system) |
 | conda | yes (miniconda3) | **no** |
 | sudo | — | **no** |
 
@@ -52,9 +53,20 @@ Decision and reasoning (settled — do not revisit):
   ```
   python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
   ```
-- `requirements.txt` is mandatory, fully pinned (`pip freeze` after a working smoke run), including the
-  torch CUDA-wheel line (current stable cu12x wheel — driver 580 is backward-compatible with cu12x
-  runtimes on both machines). Add a `README.md` setup section with the three lines above.
+- **Dual-Python constraint: dev is Python 3.10.12, lab is 3.12.3, and the venv is built from system
+  python on each machine.** Requirements must install and run on BOTH without version switching:
+  - Write code for 3.10 syntax (no 3.12-only features); it then runs on 3.12 automatically.
+  - Choose package versions that ship wheels for cp310 AND cp312: torch ≥2.2 (first release with cp312
+    wheels), numpy ≥1.26, and generally "recent stable" versions of everything — old pins are the risk,
+    not new ones.
+  - Pin exact versions in `requirements.txt` from the working dev (3.10) smoke env, then verify cp312
+    wheels exist for every pin (`pip download -r requirements.txt --python-version 312 --only-binary=:all:
+    -d /tmp/wheelcheck` is a sufficient offline check; fix any pin that fails it).
+  - Do not use conda to "align" Python versions — the whole point is that plain system-python venvs work
+    on both machines as-is.
+- `requirements.txt` is mandatory, fully pinned as described above, including the torch CUDA-wheel line
+  (current stable cu12x wheel — driver 580 is backward-compatible with cu12x runtimes on both machines).
+  Add a `README.md` setup section with the three lines above.
 - `.gitignore`: `.venv/`, `outputs/`, `__pycache__/`, feature caches, checkpoints (keep configs + split
   files + diagnostics scripts tracked).
 
