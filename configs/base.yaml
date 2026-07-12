@@ -5,7 +5,7 @@ data:
   labels_root: /home/vaibhav/3DRealCars-Labels
   split_file: configs/split.json
   train_cars: dev_smoke        # TOBECHANGED train_pool (3090, 500 cars)
-  test_cars: dev_test_smoke    # TOBECHANGEwhen D test (3090, full held-out set)
+  test_cars: dev_test_smoke    # TOBECHANGED test (3090, full held-out set)
   input_res: 518               # TOBECHANGED 896 (3090)
   grid_res: 64
   theta_min: 30.0

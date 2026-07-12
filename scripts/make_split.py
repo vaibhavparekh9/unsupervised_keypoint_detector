@@ -19,6 +19,8 @@ OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
 NUM_TRAIN_POOL = 500
 NUM_DEV_SMOKE = 20      # TOBECHANGED: lab uses train_pool directly (3090)
 NUM_DEV_TEST_SMOKE = 10
+NUM_TEST_EVAL = 200     # lab eval subset of test (feature-cache disk bound);
+                        # the full `test` list remains for final numbers
 
 
 def main():
@@ -31,6 +33,7 @@ def main():
         "test": cars[NUM_TRAIN_POOL:],
         "dev_smoke": cars[:NUM_DEV_SMOKE],
         "dev_test_smoke": cars[NUM_TRAIN_POOL:NUM_TRAIN_POOL + NUM_DEV_TEST_SMOKE],
+        "test_eval": cars[NUM_TRAIN_POOL:NUM_TRAIN_POOL + NUM_TEST_EVAL],
     }
     with open(OUT, "w") as f:
         json.dump(split, f, indent=1)
