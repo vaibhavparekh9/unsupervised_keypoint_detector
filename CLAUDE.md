@@ -235,3 +235,23 @@ order + temporal smoothness + 360° loop closure); partial-arc stitching; second
   RTX 3090 24 GB / CUDA 13.0 / no conda / no sudo. Env decision: plain venv + pinned requirements.txt;
   docker ruled out (no sudo on lab → unfixable root-owned files). `#TOBECHANGED` convention adopted.
   Repo git-tracked. No code yet. Next: S0.
+- 2026-07-12 (autopilot session): Env ready: `kp/` venv (Python 3.10.12) + pinned `requirements.txt`
+  (torch 2.13.0 default PyPI wheel = CUDA 13 runtime; all pins verified to ship cp310 AND cp312
+  manylinux wheels via PyPI API). **BLOCKER (flagged, not fixed): CUDA is unusable on the dev PC —
+  `cuInit` returns 999 system-wide; `/dev/nvidia-uvm` open gives EIO (stale nvidia_uvm state;
+  nvidia-smi works). Fix needs root: `sudo rmmod nvidia_uvm && sudo modprobe nvidia_uvm` (module
+  refcount 0, safe) or reboot. Agent had no sudo permission; all smoke runs this session are CPU
+  (code is device-agnostic, `--device cuda` ready).**
+- 2026-07-12: **S0 complete, gate PASS** (`outputs/diagnostics/gate_s0.json`): round-trip A→B→A median
+  0.98 px @128; vis-frac mean 22.7%, p10 7.9%, Pearson(angle, vis) = -0.28; PifPaf reprojection median
+  50.2 px = 2.09% of image diagonal over 174 kp matches (gate ≤2.5%). Components: `src/data/geometry.py`
+  (ported thesis correspondence math verbatim + azimuth/projection helpers), `src/data/pifpaf.py`
+  (CAR_KEYPOINTS_24 ordering + L/R + F/R pairs), `src/data/realcar.py` (pair dataset), committed
+  `configs/split.json` (500-car pool, 2083 test, dev_smoke=20, dev_test_smoke=10), `scripts/gate_s0.py`,
+  warp overlays in `outputs/diagnostics/warps/` (visually verified: hood→hood, headlight→headlight).
+  Two data findings baked into the loader: (1) pairing must use **horizontal viewing-azimuth
+  separation**, not rotation-geodesic angle — phone pitch/roll lets opposite-side pairs into the 30–80°
+  band (near-zero visibility); (2) temporally distant same-car frames (multi-loop captures) carry ARKit
+  drift that the ε=0.05 m occlusion check rejects wholesale → `min_valid_ratio=0.05` prefilter at pair
+  sampling using cached 16×16 depth (visfrac estimate, ~ms/pair). Every frame in the corpus is
+  depth-bearing (verified) — any frame can be a source view. Depth PNGs: int32 mm, 256×192. Next: S1.

@@ -1,0 +1,12 @@
+# Pinned from the working dev (Python 3.10) smoke env; every pin verified to
+# ship cp310 AND cp312 wheels (dev = 3.10.12, lab = 3.12.3).
+# torch/torchvision are the default PyPI wheels, which bundle the CUDA 13.0
+# runtime via nvidia-* wheel deps — driver 580.x on both machines supports it.
+torch==2.13.0
+torchvision==0.28.0
+numpy==2.2.6
+pillow==12.3.0
+scipy==1.15.3
+matplotlib==3.10.9
+tqdm==4.68.4
+PyYAML==6.0.3

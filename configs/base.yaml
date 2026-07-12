@@ -1,0 +1,61 @@
+# Base config — dev-PC defaults (RTX 3070 8 GB). Grep TOBECHANGED before lab runs.
+
+data:
+  image_root: /home/vaibhav/3DRealCars-English
+  labels_root: /home/vaibhav/3DRealCars-Labels
+  split_file: configs/split.json
+  train_cars: dev_smoke        # TOBECHANGED train_pool (3090, 500 cars)
+  test_cars: dev_test_smoke    # TOBECHANGEwhen D test (3090, full held-out set)
+  input_res: 518               # TOBECHANGED 896 (3090)
+  grid_res: 64
+  theta_min: 30.0
+  theta_max: 80.0
+  occlusion_thresh: 0.05
+  depth_scale: 0.001
+  motion_quality_thresh: 0.5
+  max_frames_per_car: null
+  max_pairs_per_car: 200
+  num_workers: 4               # TOBECHANGED 8 (3090)
+
+backbone:
+  name: dinov2_vitb14_reg      # TOBECHANGED dinov3 (3090; needs gated weights, see README)
+  dim: 768
+  patch: 14
+  cache_dir: outputs/cache     # fp16 token cache; smoke subset only on dev
+  dinov3_weights: null         # path to downloaded DINOv3 checkpoint if used
+
+model:
+  hidden_dim: 256
+  num_blocks: 2
+  num_heads: 8
+  descriptor_dim: 64
+  descriptor_res: 64
+  orientation: 6d              # 6d | azimuth (S1 ablation)
+  film: true                   # orientation conditioning of descriptors
+
+loss:
+  w_corr: 1.0
+  w_orient: 1.0
+  w_sphere: 0.5
+  w_cross: 0.25
+  corr_pow: 0.5
+  corr_normalize: true
+  corr_temp: 20.0              # feature norm scale before softmax (DVE convention)
+  sphere_temp: 10.0
+  cross_instance: pseudo       # none | exchange | pseudo
+  pseudo_sim_thresh: 0.7
+  visibility_masking: true
+
+train:
+  batch_size: 4                # pairs per batch  TOBECHANGED 16 (3090)
+  lr: 1.0e-4
+  weight_decay: 0.01
+  total_steps: 3000            # TOBECHANGED 60000 (3090)
+  warmup_steps: 200
+  amp: true
+  seed: 0
+  log_every: 25
+  ckpt_every: 500
+  eval_every: 500              # TOBECHANGED 2000 (3090)
+  vis_every: 500
+  out_dir: outputs/runs/base
