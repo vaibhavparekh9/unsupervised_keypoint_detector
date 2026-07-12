@@ -62,8 +62,9 @@ def main():
     ap.add_argument("--cars", default="dev_test_smoke")  # TOBECHANGED test (3090)
     ap.add_argument("--backbone", default="dinov2_vitb14_reg")
     ap.add_argument("--input-res", type=int, default=518)
-    ap.add_argument("--num-intra", type=int, default=250)
-    ap.add_argument("--num-cross", type=int, default=120)
+    # large enough that the high-azimuth confusion bins have usable n
+    ap.add_argument("--num-intra", type=int, default=800)
+    ap.add_argument("--num-cross", type=int, default=400)
     ap.add_argument("--image-root", default="/home/vaibhav/3DRealCars-English")
     ap.add_argument("--labels-root", default="/home/vaibhav/3DRealCars-Labels")
     args = ap.parse_args()
