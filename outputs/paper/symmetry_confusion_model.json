@@ -1,0 +1,29 @@
+{
+ "confusion_vs_azimuth": {
+  "0-30": {
+   "n": 43,
+   "confusion_rate": 0.0
+  },
+  "30-60": {
+   "n": 13,
+   "confusion_rate": 0.0
+  },
+  "60-90": {
+   "n": 18,
+   "confusion_rate": 0.0
+  },
+  "90-120": {
+   "n": 3,
+   "confusion_rate": 0.3333333333333333
+  },
+  "120-180": {
+   "n": 3,
+   "confusion_rate": 0.6666666666666666
+  }
+ },
+ "confusion_by_group": {
+  "wheels": null,
+  "lights": 0.0,
+  "mirrors": null
+ }
+}

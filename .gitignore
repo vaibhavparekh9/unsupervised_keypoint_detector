@@ -1,6 +1,7 @@
 kp/
 .venv/
-outputs/
+outputs/cache
+outputs/runs/full/vis
 __pycache__/
 *.pyc
 .ipynb_checkpoints/

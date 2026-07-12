@@ -1,0 +1,50 @@
+{
+ "backbone": "dinov2_vitb14_reg",
+ "pck": {
+  "intra": {
+   "num_pairs": 194,
+   "num_kps": 438,
+   "pck@10_feat64": 80.36529680365297,
+   "pck@5_feat64": 75.57077625570776,
+   "median_err_feat64": 1.5186931490898132
+  },
+  "cross": {
+   "num_pairs": 120,
+   "num_kps": 259,
+   "pck@10_feat64": 60.231660231660236,
+   "pck@5_feat64": 53.28185328185329,
+   "median_err_feat64": 4.364073276519775
+  }
+ },
+ "confusion_vs_azimuth": {
+  "0-30": {
+   "n": 88,
+   "confusion_rate": 0.13636363636363635
+  },
+  "30-60": {
+   "n": 29,
+   "confusion_rate": 0.3448275862068966
+  },
+  "60-90": {
+   "n": 32,
+   "confusion_rate": 0.75
+  },
+  "90-120": {
+   "n": 5,
+   "confusion_rate": 1.0
+  },
+  "120-180": {
+   "n": 12,
+   "confusion_rate": 0.5
+  }
+ },
+ "confusion_by_group": {
+  "wheels": null,
+  "lights": 0.3333333333333333,
+  "mirrors": null
+ },
+ "ran_ok": true,
+ "confusion_grows_with_separation": true,
+ "no_confusion_flag": false,
+ "gate_pass": true
+}

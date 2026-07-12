@@ -1,0 +1,55 @@
+backbone:
+  cache_dir: outputs/cache
+  dim: 768
+  dinov3_weights: null
+  name: dinov2_vitb14_reg
+  patch: 14
+data:
+  depth_scale: 0.001
+  grid_res: 64
+  image_root: /home/vsparekh/3DRealCars-English
+  input_res: 518
+  labels_root: /home/vsparekh/3DRealCars-Labels
+  max_frames_per_car: null
+  max_pairs_per_car: 200
+  motion_quality_thresh: 0.5
+  num_workers: 24
+  occlusion_thresh: 0.05
+  split_file: configs/split.json
+  test_cars: lab_test
+  theta_max: 80.0
+  theta_min: 30.0
+  train_cars: lab_train
+loss:
+  corr_normalize: true
+  corr_pow: 0.5
+  corr_temp: 20.0
+  cross_instance: pseudo
+  pseudo_sim_thresh: 0.7
+  sphere_temp: 10.0
+  visibility_masking: true
+  w_corr: 1.0
+  w_cross: 0.25
+  w_orient: 1.0
+  w_sphere: 0.5
+model:
+  descriptor_dim: 64
+  descriptor_res: 64
+  film: true
+  hidden_dim: 256
+  num_blocks: 2
+  num_heads: 8
+  orientation: 6d
+train:
+  amp: true
+  batch_size: 16
+  ckpt_every: 500
+  eval_every: 2000
+  log_every: 25
+  lr: 0.0001
+  out_dir: outputs/runs/full
+  seed: 0
+  total_steps: 60000
+  vis_every: 500
+  warmup_steps: 200
+  weight_decay: 0.01
