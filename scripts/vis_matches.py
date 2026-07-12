@@ -53,6 +53,10 @@ def main():
     ap.add_argument("--input-res", type=int, default=518)
     ap.add_argument("--grid-step", type=int, default=5,
                     help="sample every Nth descriptor-grid cell in A")
+    ap.add_argument("--pifpaf", action="store_true",
+                    help="query at A's PifPaf keypoints instead of a grid; "
+                         "draw B's own PifPaf keypoints as ground truth (x)")
+    ap.add_argument("--labels-root", default="/home/vaibhav/3DRealCars-Labels")
     ap.add_argument("--min-sim", type=float, default=0.6)
     ap.add_argument("--device", default=None)
     ap.add_argument("--image-root", default="/home/vaibhav/3DRealCars-English")
@@ -88,16 +92,42 @@ def main():
     G = desc.shape[-1]
     S = args.input_res
 
-    # grid-sample source points, NN-match into target
-    idx = torch.arange(0, G, args.grid_step)
-    vv, uu = torch.meshgrid(idx, idx, indexing="ij")
-    uu, vv = uu.reshape(-1), vv.reshape(-1)
-    f1 = desc[0][:, vv, uu].t().to(device)                     # (M, C)
+    gt_b = None
+    if args.pifpaf:
+        # query at A's PifPaf keypoints; show B's own detections as GT
+        from src.data import pifpaf
+        kps_q, kps_gt = [], []
+        for spec, store in ((args.frame_a, kps_q), (args.frame_b, kps_gt)):
+            car, frame = spec.split(":")
+            lab = pifpaf.load_keypoints(args.labels_root, car, frame)
+            if lab is None:
+                sys.exit(f"{spec}: no single-detection PifPaf label — "
+                         "pick another frame or drop --pifpaf")
+            k, c = lab
+            store.append((geo.points_to_crop(k, S), c))
+        (ka, ca), (kb, cb) = kps_q[0], kps_gt[0]
+        common = np.where((ca > 0.5) & (cb > 0.5))[0]
+        qpts = ka[common] * G / S                              # descriptor grid
+        uu = torch.tensor(qpts[:, 0])
+        vv = torch.tensor(qpts[:, 1])
+        gt_b = kb[common]
+        g = torch.stack([uu, vv], 1).reshape(1, 1, -1, 2) / (G - 1) * 2 - 1
+        f1 = F.grid_sample(desc[0:1], g.float().to(device), mode="bilinear",
+                           align_corners=True).squeeze().t()   # (M, C)
+        f1 = F.normalize(f1, p=2, dim=1)
+        kp_names = [pifpaf.KEYPOINT_NAMES[i] for i in common]
+    else:
+        idx = torch.arange(0, G, args.grid_step)
+        vv, uu = torch.meshgrid(idx, idx, indexing="ij")
+        uu, vv = uu.reshape(-1), vv.reshape(-1)
+        f1 = desc[0][:, vv, uu].t().to(device)                 # (M, C)
+
     f2 = desc[1].reshape(desc.shape[1], -1)                    # (C, G*G)
     sim = f1 @ f2
     conf, nn = sim.max(dim=1)
-    keep = conf > args.min_sim
-    uu, vv, nn = uu[keep.cpu()], vv[keep.cpu()], nn[keep].cpu()
+    keep = (conf > args.min_sim).cpu() if not args.pifpaf else \
+        torch.ones(len(uu), dtype=torch.bool)
+    uu, vv, nn = uu[keep], vv[keep], nn[keep.to(nn.device)].cpu()
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 6))
     axes[0].imshow(ims[0])
@@ -106,14 +136,21 @@ def main():
     s = S / G
     for k in range(len(uu)):
         axes[0].scatter([float(uu[k]) * s], [float(vv[k]) * s],
-                        color=colors[k], s=14)
+                        color=colors[k], s=26 if args.pifpaf else 14)
         axes[1].scatter([float(nn[k] % G) * s], [float(nn[k] // G) * s],
-                        color=colors[k], s=14)
+                        color=colors[k], s=26 if args.pifpaf else 14)
+        if gt_b is not None:
+            axes[1].scatter([gt_b[k, 0]], [gt_b[k, 1]], color=colors[k],
+                            marker="x", s=60, linewidths=2)
     for ax, name in zip(axes, names):
         ax.set_title(name)
         ax.axis("off")
-    fig.suptitle(f"descriptor NN matches (sim > {args.min_sim}), "
-                 f"{int(keep.sum())} shown")
+    if args.pifpaf:
+        fig.suptitle("PifPaf keypoints in A (dots) -> predicted match in B "
+                     "(dots) vs B's own PifPaf pseudo-GT (x)")
+    else:
+        fig.suptitle(f"descriptor NN matches (sim > {args.min_sim}), "
+                     f"{int(keep.sum())} shown")
     fig.tight_layout()
     out_path = args.out or os.path.join(
         REPO, "outputs/diagnostics",
