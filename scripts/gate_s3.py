@@ -54,11 +54,13 @@ def load_model(ckpt_path, device):
     return model, Cfg(ck["cfg"])
 
 
-def collect_desc_maps(provider, car_frames, input_res, feature_res=64):
-    """Stack descriptor maps + normalized kps for regressor training."""
+def collect_desc_maps(provider, car_frames, input_res, feature_res=64,
+                      max_frames_per_car=25):
+    """Stack descriptor maps + normalized kps for regressor training.
+    max_frames_per_car bounds memory (1 MB per frame at 64x64x64)."""
     descs, kps, vis = [], [], []
     for frames in car_frames.values():
-        for fr in frames:
+        for fr in frames[:max_frames_per_car]:
             descs.append(provider(fr))
             kps.append(fr["kps"] / (input_res - 1) * 2.0 - 1.0)
             vis.append(fr["visible"])

@@ -183,9 +183,10 @@ def main():
     val_ds = build_dataset(cfg, cfg.data.test_cars, seed=0, max_pairs=10)
     print(f"train pairs: {len(train_ds)}  val pairs: {len(val_ds)}")
 
+    # NOTE: persistent_workers must stay False — resample_pairs() mutates the
+    # pair list each epoch and only reaches workers when they re-fork.
     loader = DataLoader(train_ds, batch_size=cfg.train.batch_size, shuffle=True,
-                        num_workers=cfg.data.num_workers, drop_last=True,
-                        persistent_workers=cfg.data.num_workers > 0)
+                        num_workers=cfg.data.num_workers, drop_last=True)
     val_loader = DataLoader(val_ds, batch_size=cfg.train.batch_size,
                             num_workers=0)
 
