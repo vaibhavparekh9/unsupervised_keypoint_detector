@@ -255,3 +255,41 @@ order + temporal smoothness + 360° loop closure); partial-arc stitching; second
   drift that the ε=0.05 m occlusion check rejects wholesale → `min_valid_ratio=0.05` prefilter at pair
   sampling using cached 16×16 depth (visfrac estimate, ~ms/pair). Every frame in the corpus is
   depth-bearing (verified) — any frame can be a source view. Depth PNGs: int32 mm, 256×192. Next: S1.
+- 2026-07-12 (session paused at ~90% usage — RESUME POINT). Code written and unit-smoked but gates S1+
+  NOT yet run (blocked on feature cache, see below):
+  - **S1 code done:** `src/models/backbone.py` (frozen DINOv2 vitb14_reg via torch.hub; DINOv3 gated —
+    needs `backbone.dinov3_weights`), `scripts/cache_features.py` (fp16 token cache), `src/eval/probe.py`
+    (shared PCK + symmetry-confusion machinery), `scripts/gate_s1.py` (thin wrapper; STOP-flag exit 2 if
+    no confusion found). DINOv2 weights fully downloaded to `~/.cache/torch/hub/checkpoints/`
+    (346 MB present; a stray 0-byte `.partial` beside it is harmless junk from a raced 2nd download).
+  - **S2 code done, unit-smoked (shapes/grads/rotations verified; 2.39M params, all params receive
+    grad):** `src/models/head.py` (orientation query + FiLM + sphere branch, sincos posemb =
+    resolution-agnostic), `src/models/rotation.py`, `src/losses/{correspondence,orientation,
+    cross_instance}.py` (masked corr + DVE-exchange variant + warped consistency + geodesic rel-rot +
+    pseudo-match), `src/eval/validation.py` (desc-PCK vs GT warp + rot Spearman), `scripts/train.py`
+    (config-driven, AMP, resume, jsonl logs, match-vis), `scripts/gate_s2a.py` (overfit: loss ≤0.6× +
+    train-pair PCK ≥70), `scripts/gate_s2b.py` (corr decreasing + rot_spearman >0.3).
+  - **S3 code done (not run):** `src/eval/regressor.py` (ported DVE 50-virtual-kp predictor),
+    `src/eval/discovery.py` (spherical k-means + cross-view consistency), `scripts/gate_s3.py` (a–d).
+  - **S4 partial:** SPair-71k tarball fully downloaded at `data/downloads/SPair-71k.tar.gz` (227 MB, from
+    https://cvlab.postech.ac.kr/research/SPair-71k/data/SPair-71k.tar.gz). Freiburg = **Freiburg Static
+    Cars 52** (SphericalMaps benchmark), 4.46 GB at https://lmb.informatik.uni-freiburg.de/resources/
+    datasets/FreiburgStaticCars52/freiburg_static_cars_52_v1.1.tar.gz — download was ~15% done at pause
+    and will NOT survive session end; resume with `curl -C - -L -o data/downloads/freiburg_static_cars_52_v1.1.tar.gz <url>`.
+    Config `_base:` inheritance added to `src/utils/config.py` for S5 ablation configs. Harness scripts
+    (`bench_external.py`, converters, fixture mode) NOT yet written. S5 not started.
+  - **CPU-smoke settings decided** (GPU still broken, see blocker above): backbone fwd 1.45 s/frame CPU;
+    corr loss at G=64 too slow on CPU → smoke gates use overrides `data.grid_res=32
+    model.descriptor_res=32 train.batch_size=2` (configs keep GPU defaults 518/64).
+  - **RESUME CHECKLIST (in order):** (1) restart feature cache: `python scripts/cache_features.py --cars
+    dev_smoke dev_test_smoke --max-frames 80 --device cpu --batch 2` (~50 min CPU, ~2000 frames — a
+    stalled-download race killed the first attempt; weights are now local so it will not recur; if GPU
+    fixed use --device cuda); (2) run `python scripts/gate_s1.py`; (3) `python scripts/gate_s2a.py` then
+    `gate_s2b.py` (CPU: defaults already reduced); (4) `gate_s3.py --ckpt outputs/runs/smoke/ckpt_last.pth`;
+    (5) write S4 harnesses (bench_external + SPair converter + Freiburg converter + fixture) + gate_s4;
+    (6) S5 ablation configs (use `_base: ../base.yaml`) + run_all_lab.sh + gate_s5; (7) commit at each
+    green gate; (8) final summary incl. GPU-fix instructions (`sudo rmmod nvidia_uvm && sudo modprobe
+    nvidia_uvm`) and lab-PC launch steps.
+  - NOTE: `configs/base.yaml` line 8 contains a stray edit ("TOBECHANGEwhen D test") that breaks the
+    exact-string TOBECHANGED grep — appeared mid-session outside agent edits; confirm intent and fix,
+    or grep for 'TOBECHANGE' instead.
