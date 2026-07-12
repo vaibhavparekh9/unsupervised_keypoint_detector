@@ -4,7 +4,7 @@ data:
   image_root: /home/vaibhav/3DRealCars-English
   labels_root: /home/vaibhav/3DRealCars-Labels
   split_file: configs/split.json
-  train_cars: dev_smoke        # TOBECHANGED train_pool (3090, 500 cars)
+  train_cars: dev_smoke        # TOBECHANGED lab_train (3090; 400 cars, see split.json)
   test_cars: dev_test_smoke    # TOBECHANGED test (3090, full held-out set)
   input_res: 518               # TOBECHANGED 896 (3090)
   grid_res: 64

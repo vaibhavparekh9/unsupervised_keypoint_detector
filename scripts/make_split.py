@@ -21,6 +21,9 @@ NUM_DEV_SMOKE = 20      # TOBECHANGED: lab uses train_pool directly (3090)
 NUM_DEV_TEST_SMOKE = 10
 NUM_TEST_EVAL = 200     # lab eval subset of test (feature-cache disk bound);
                         # the full `test` list remains for final numbers
+NUM_LAB_TRAIN = 400     # lab PC only has cars 0000-0499 on disk, so its
+                        # held-out test set must come out of those 500:
+                        # lab_train = first 400, lab_test = last 100
 
 
 def main():
@@ -34,6 +37,8 @@ def main():
         "dev_smoke": cars[:NUM_DEV_SMOKE],
         "dev_test_smoke": cars[NUM_TRAIN_POOL:NUM_TRAIN_POOL + NUM_DEV_TEST_SMOKE],
         "test_eval": cars[NUM_TRAIN_POOL:NUM_TRAIN_POOL + NUM_TEST_EVAL],
+        "lab_train": cars[:NUM_LAB_TRAIN],
+        "lab_test": cars[NUM_LAB_TRAIN:NUM_TRAIN_POOL],
     }
     with open(OUT, "w") as f:
         json.dump(split, f, indent=1)

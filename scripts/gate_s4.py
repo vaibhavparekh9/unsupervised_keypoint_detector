@@ -25,7 +25,8 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = sys.executable
 
 
-def build_fixture(image_root, labels_root, out_dir, num_pairs=8):
+def build_fixture(image_root, labels_root, out_dir, num_pairs=8,
+                  cars_key="dev_test_smoke"):
     """SPair-format pairs from 3DRealCar test cars + PifPaf keypoints."""
     from PIL import Image
     from src.data import pifpaf
@@ -37,7 +38,7 @@ def build_fixture(image_root, labels_root, out_dir, num_pairs=8):
     os.makedirs(os.path.join(out_dir, "pairs"), exist_ok=True)
 
     made = 0
-    for car_id in split["dev_test_smoke"]:
+    for car_id in split[cars_key]:
         if made >= num_pairs:
             break
         frames = []
@@ -96,13 +97,16 @@ def main():
     ap.add_argument("--ckpt", default="outputs/runs/smoke/ckpt_last.pth")
     ap.add_argument("--image-root", default="/home/vaibhav/3DRealCars-English")
     ap.add_argument("--labels-root", default="/home/vaibhav/3DRealCars-Labels")
+    ap.add_argument("--fixture-cars", default="dev_test_smoke",
+                    help="split key for fixture frames (lab PC: lab_test)")
     args = ap.parse_args()
 
     status = {}
 
     fixture_dir = os.path.join(REPO, "data/fixture_bench")
     if not os.path.isdir(os.path.join(fixture_dir, "pairs")):
-        n = build_fixture(args.image_root, args.labels_root, fixture_dir)
+        n = build_fixture(args.image_root, args.labels_root, fixture_dir,
+                          cars_key=args.fixture_cars)
         print(f"fixture built: {n} pairs")
     res = run_bench("fixture", fixture_dir, args.ckpt)
     status["fixture"] = {"ok": res is not None, **(res or {})}
