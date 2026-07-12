@@ -69,10 +69,11 @@ def train_regressor(desc_maps, kps_norm, vis, steps=400, lr=1e-3,
 
 @torch.no_grad()
 def eval_regressor(model, desc_maps, kps_norm, vis, feature_res=64,
-                   device="cpu"):
+                   device="cpu", chunk=16):
     """PCK@10 on the 64-grid (thesis convention): normalized error scaled to
-    feature-grid pixels."""
-    pred = model(desc_maps.to(device)).cpu()            # (N, nA, 2) in [-1,1]
+    feature-grid pixels. Chunked to bound GPU memory."""
+    pred = torch.cat([model(desc_maps[i:i + chunk].to(device)).cpu()
+                      for i in range(0, len(desc_maps), chunk)])
     err_grid = ((pred - kps_norm).pow(2).sum(-1).sqrt()
                 * (feature_res - 1) / 2.0)              # normalized -> grid px
     m = vis.bool()
