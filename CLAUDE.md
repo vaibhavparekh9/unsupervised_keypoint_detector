@@ -293,3 +293,34 @@ order + temporal smoothness + 360° loop closure); partial-arc stitching; second
   - NOTE: `configs/base.yaml` line 8 contains a stray edit ("TOBECHANGEwhen D test") that breaks the
     exact-string TOBECHANGED grep — appeared mid-session outside agent edits; confirm intent and fix,
     or grep for 'TOBECHANGE' instead.
+- 2026-07-12 (autopilot session 3, GPU fixed by reboot): **ALL GATES S0–S5 GREEN; smoke pipeline
+  complete end-to-end on the dev 3070.** DINOv3 weights obtained by user
+  (`data/downloads/dinov3_vitb16_pretrain_lvd1689m-73cec8be.pth`, verified ViT-B/16 85.7M); SPair-71k
+  extracted to `data/SPair-71k/`; Freiburg Static Cars 52 downloaded+extracted to `data/freiburg_cars/`
+  (47 seqs; annotations are **bbox+azimuth only, no keypoints** → Freiburg harness evaluates zero-shot
+  relative-azimuth consistency of the orientation head, the annotation SphericalMaps binned).
+  - **S1 PASS** (`outputs/paper/`): frozen DINOv2 L/R confusion grows 11.9%→65.1%→80.8% over azimuth
+    bins 0-30/30-60/60-90 (motivation figure ✓); zero-shot baseline PCK@10@64: 73.5 intra / 67.7 cross.
+  - **S2a PASS**: overfit 2 cars: loss 7.48→2.53, train-pair descPCK@10 98.3, rot err 1.8°, ρ=0.994.
+  - **S2b PASS** (3000 steps, G=64, batch 4, ~8 min GPU; `outputs/runs/smoke/`): corr 2.69→1.58;
+    held-out (10 test cars): **descPCK@10 91.5, rot Spearman 0.63, rot median err 7.7°**.
+  - **S3 PASS** (`outputs/paper/`): (a) model PCK@10@64 **85.5 intra / 72.8 cross** (beats frozen
+    baseline already at smoke scale); (b) DVE-regressor test PCK@10 71.9; (c) discovery K=16: cross-view
+    median err 3.1px@64, repeat rate 0.26; (d) model confusion figure emitted. Fixes: chunked regressor
+    eval (OOM), `scripts/__init__.py` (ROS `scripts` pkg shadowing), cache-filtered pair sampling,
+    persistent_workers=False (resample_pairs must reach re-forked workers).
+  - **S4 PASS**: fixture PCK@0.1 58.6 (8 pairs); SPair-71k cars zero-shot PCK@0.1 47.7 all /
+    38.8 viewpoint-subset (30 pairs, smoke ckpt); Freiburg rel-azimuth Spearman 0.29, med err 31°
+    (weak = expected at smoke scale; mechanics proven). `--max-pairs 0` = full set on lab.
+  - **S5 PASS**: all 7 ablation configs launch+train 50 steps (full, no_masking, no_film, cross_none,
+    cross_exchange, azimuth, dinov3 — dinov3 cached its own features at 512px, hub needs
+    torchmetrics+termcolor, now pinned). `scripts/run_all_lab.sh` = full 3090 matrix, resume-safe.
+  - Smoke conclusions worth carrying forward: orientation head learns relative rotation from ARKit
+    metadata alone (ρ 0.63 at 20-car scale); trained descriptors beat frozen backbone on cross-instance
+    PCK; discovery repeat-rate is the weakest smoke metric (0.26) — watch it at full scale.
+  - Remaining flags for user: (1) `configs/base.yaml:8` stray "TOBECHANGEwhen D" typo still present
+    (grep 'TOBECHANGE' catches it); (2) PifPaf CAR_KEYPOINTS_24 ordering assumed from openpifpaf
+    apollocar3d plugin (S1 confusion curve behaving as expected corroborates it); (3) Freiburg keypoint
+    PCK vs SphericalMaps' reported numbers needs their exact eval protocol/annotations — harness slot
+    exists, `data/freiburg_cars/keypoints.json` documented as the drop-in path.
+  Next: lab 3090 full runs via `scripts/run_all_lab.sh` (grep TOBECHANGE first).
