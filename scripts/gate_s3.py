@@ -78,16 +78,11 @@ def main():
     ap.add_argument("--num-intra", type=int, default=800)
     ap.add_argument("--num-cross", type=int, default=400)
     ap.add_argument("--k-landmarks", type=int, default=16)
-<<<<<<< HEAD
     ap.add_argument("--image-root", default="/home/vsparekh/3DRealCars-English")
     ap.add_argument("--labels-root", default="/home/vsparekh/3DRealCars-Labels")
-=======
-    ap.add_argument("--image-root", default="/home/vaibhav/3DRealCars-English")
-    ap.add_argument("--labels-root", default="/home/vaibhav/3DRealCars-Labels")
     ap.add_argument("--tag", default=None,
                     help="suffix for output files (default: run-dir name of "
                          "the checkpoint, e.g. 'full', 'no_film')")
->>>>>>> da4bcf8 (gate_s3: per-run output tags (reinstated, without vis_sphere))
     args = ap.parse_args()
 
     tag = args.tag or os.path.basename(
