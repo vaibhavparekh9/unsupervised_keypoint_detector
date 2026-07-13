@@ -2,45 +2,45 @@
  "backbone": "dinov2_vitb14_reg",
  "pck": {
   "intra": {
-   "num_pairs": 194,
-   "num_kps": 438,
-   "pck@10_feat64": 80.36529680365297,
-   "pck@5_feat64": 75.57077625570776,
-   "median_err_feat64": 1.5186931490898132
+   "num_pairs": 591,
+   "num_kps": 1358,
+   "pck@10_feat64": 79.30780559646539,
+   "pck@5_feat64": 73.6377025036819,
+   "median_err_feat64": 1.5420136451721191
   },
   "cross": {
-   "num_pairs": 120,
-   "num_kps": 259,
-   "pck@10_feat64": 60.231660231660236,
-   "pck@5_feat64": 53.28185328185329,
-   "median_err_feat64": 4.364073276519775
+   "num_pairs": 400,
+   "num_kps": 842,
+   "pck@10_feat64": 67.6959619952494,
+   "pck@5_feat64": 58.432304038004744,
+   "median_err_feat64": 3.600982427597046
   }
  },
  "confusion_vs_azimuth": {
   "0-30": {
-   "n": 88,
-   "confusion_rate": 0.13636363636363635
+   "n": 233,
+   "confusion_rate": 0.10300429184549356
   },
   "30-60": {
-   "n": 29,
-   "confusion_rate": 0.3448275862068966
+   "n": 93,
+   "confusion_rate": 0.46236559139784944
   },
   "60-90": {
-   "n": 32,
-   "confusion_rate": 0.75
+   "n": 84,
+   "confusion_rate": 0.7619047619047619
   },
   "90-120": {
-   "n": 5,
-   "confusion_rate": 1.0
+   "n": 22,
+   "confusion_rate": 0.9090909090909091
   },
   "120-180": {
-   "n": 12,
-   "confusion_rate": 0.5
+   "n": 18,
+   "confusion_rate": 0.4444444444444444
   }
  },
  "confusion_by_group": {
   "wheels": null,
-  "lights": 0.3333333333333333,
+  "lights": 0.3146067415730337,
   "mirrors": null
  },
  "ran_ok": true,

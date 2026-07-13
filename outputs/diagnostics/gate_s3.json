@@ -2,23 +2,23 @@
  "status": {
   "a_pck": {
    "ok": true,
-   "intra": 86.4406779661017,
-   "cross": 77.720207253886
+   "intra": 88.43888070692194,
+   "cross": 78.02850356294537
   },
   "d_confusion": {
    "ok": true
   },
   "b_regressor": {
    "ok": true,
-   "test_pck10": 82.90043290043289
+   "test_pck10": 83.84063852813853
   },
   "c_discovery": {
    "ok": true,
    "num_pairs": 30,
-   "mean_err_feat": 3.937157817523588,
-   "median_err_feat": 2.469741106033325,
-   "repeat_rate": 0.2233502538071066,
-   "n_detections_checked": 394
+   "mean_err_feat": 3.3339045013574995,
+   "median_err_feat": 2.152738332748413,
+   "repeat_rate": 0.22077922077922077,
+   "n_detections_checked": 385
   }
  },
  "gate_pass": true
