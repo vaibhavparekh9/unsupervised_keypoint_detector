@@ -78,10 +78,20 @@ def main():
     ap.add_argument("--num-intra", type=int, default=800)
     ap.add_argument("--num-cross", type=int, default=400)
     ap.add_argument("--k-landmarks", type=int, default=16)
+<<<<<<< HEAD
     ap.add_argument("--image-root", default="/home/vsparekh/3DRealCars-English")
     ap.add_argument("--labels-root", default="/home/vsparekh/3DRealCars-Labels")
+=======
+    ap.add_argument("--image-root", default="/home/vaibhav/3DRealCars-English")
+    ap.add_argument("--labels-root", default="/home/vaibhav/3DRealCars-Labels")
+    ap.add_argument("--tag", default=None,
+                    help="suffix for output files (default: run-dir name of "
+                         "the checkpoint, e.g. 'full', 'no_film')")
+>>>>>>> da4bcf8 (gate_s3: per-run output tags (reinstated, without vis_sphere))
     args = ap.parse_args()
 
+    tag = args.tag or os.path.basename(
+        os.path.dirname(os.path.join(REPO, args.ckpt))) or "run"
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
     model, cfg = load_model(os.path.join(REPO, args.ckpt), device)
     cache_root = os.path.join(REPO, cfg.backbone.cache_dir,
@@ -108,11 +118,11 @@ def main():
         results, conf_curve, group_rates, _ = run_probe(
             provider, test_frames, args.input_res,
             args.num_intra, args.num_cross)
-        with open(os.path.join(paper_dir, "model_pck.json"), "w") as f:
+        with open(os.path.join(paper_dir, f"model_pck_{tag}.json"), "w") as f:
             json.dump(results, f, indent=1)
-        with open(os.path.join(paper_dir, "model_pck.md"), "w") as f:
+        with open(os.path.join(paper_dir, f"model_pck_{tag}.md"), "w") as f:
             f.write("| method | intra PCK@10 | cross PCK@10 |\n|---|---|---|\n")
-            f.write(f"| ours (smoke ckpt) "
+            f.write(f"| ours ({tag}) "
                     f"| {results['intra']['pck@10_feat64']:.1f} "
                     f"| {results['cross']['pck@10_feat64']:.1f} |\n")
         status["a_pck"] = {"ok": True, **{k: v["pck@10_feat64"]
@@ -124,13 +134,13 @@ def main():
     # ---------- (d) symmetry confusion with trained model ----------
     try:
         from scripts.gate_s1 import save_confusion_plot
-        with open(os.path.join(paper_dir, "symmetry_confusion_model.json"),
+        with open(os.path.join(paper_dir, f"symmetry_confusion_model_{tag}.json"),
                   "w") as f:
             json.dump({"confusion_vs_azimuth": conf_curve,
                        "confusion_by_group": group_rates}, f, indent=1)
-        save_confusion_plot(conf_curve, "ours (smoke ckpt)",
+        save_confusion_plot(conf_curve, f"ours ({tag})",
                             os.path.join(paper_dir,
-                                         "symmetry_confusion_model.png"))
+                                         f"symmetry_confusion_model_{tag}.png"))
         status["d_confusion"] = {"ok": True}
     except Exception:
         traceback.print_exc()
@@ -145,7 +155,7 @@ def main():
         reg = train_regressor(d_tr, k_tr, v_tr, steps=400, device=device)
         res_tr = eval_regressor(reg, d_tr, k_tr, v_tr, device=device)
         res_te = eval_regressor(reg, d_te, k_te, v_te, device=device)
-        with open(os.path.join(paper_dir, "regressor_pck.json"), "w") as f:
+        with open(os.path.join(paper_dir, f"regressor_pck_{tag}.json"), "w") as f:
             json.dump({"train": res_tr, "test": res_te}, f, indent=1)
         status["b_regressor"] = {"ok": True,
                                  "test_pck10": res_te["pck@10_feat64"]}
@@ -172,7 +182,7 @@ def main():
         pairs_ds = build_dataset(cfg, args.cars_test, seed=0, max_pairs=5)
         cons = landmark_consistency(model, pairs_ds, centroids.to(device),
                                     device)
-        with open(os.path.join(paper_dir, "landmark_discovery.json"), "w") as f:
+        with open(os.path.join(paper_dir, f"landmark_discovery_{tag}.json"), "w") as f:
             json.dump({"k": args.k_landmarks, **cons}, f, indent=1)
 
         # qualitative: landmarks on 4 frames of one test car
@@ -198,7 +208,7 @@ def main():
                                color=colors[k], s=40)
             ax.axis("off")
         fig.tight_layout()
-        fig.savefig(os.path.join(paper_dir, "landmarks_qualitative.jpg"),
+        fig.savefig(os.path.join(paper_dir, f"landmarks_qualitative_{tag}.jpg"),
                     dpi=110)
         plt.close(fig)
         status["c_discovery"] = {"ok": True, **cons}
@@ -209,7 +219,7 @@ def main():
     gate_pass = all(v.get("ok") for v in status.values())
     report = {"status": status, "gate_pass": bool(gate_pass)}
     os.makedirs(os.path.join(REPO, "outputs/diagnostics"), exist_ok=True)
-    with open(os.path.join(REPO, "outputs/diagnostics/gate_s3.json"), "w") as f:
+    with open(os.path.join(REPO, f"outputs/diagnostics/gate_s3_{tag}.json"), "w") as f:
         json.dump(report, f, indent=1)
     print(json.dumps(report, indent=1))
     print("GATE S3:", "PASS" if gate_pass else "FAIL")
