@@ -1,0 +1,8 @@
+{
+ "k": 16,
+ "num_pairs": 30,
+ "mean_err_feat": 3.4900265726962205,
+ "median_err_feat": 2.4431657791137695,
+ "repeat_rate": 0.20506329113924052,
+ "n_detections_checked": 395
+}
